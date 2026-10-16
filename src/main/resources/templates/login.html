@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{login.title}, #{login.lead}, null)}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container page auth">
+    <form th:action="@{/login}" method="post" class="form card">
+        <h1 th:text="#{login.title}">Student login</h1>
+        <p class="muted" th:text="#{login.lead}">Use the login you received.</p>
+        <div th:if="${param.error != null}" class="alert alert-error" th:text="#{login.error}">Wrong email or password</div>
+        <div th:if="${param.blocked != null}" class="alert alert-error" th:text="#{login.blocked}">Too many attempts</div>
+        <div th:if="${param.disabled != null}" class="alert alert-error" th:text="#{login.disabled}">Account disabled</div>
+        <label><span th:text="#{login.email}">Email</span>
+            <input type="email" name="username" required autofocus autocomplete="username">
+        </label>
+        <label><span th:text="#{login.password}">Password</span>
+            <input type="password" name="password" required autocomplete="current-password">
+        </label>
+        <button type="submit" class="btn btn-primary btn-block" th:text="#{login.submit}">Log in</button>
+        <p class="muted small" th:text="#{login.noAccount}">No account?</p>
+    </form>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

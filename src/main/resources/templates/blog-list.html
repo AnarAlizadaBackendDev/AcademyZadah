@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{blog.title}, #{blog.lead}, null)}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container page">
+    <div class="page-head">
+        <h1 th:text="#{blog.title}">Blog</h1>
+        <p class="section-lead" th:text="#{blog.lead}">Lead</p>
+        <div class="filter-tabs">
+            <a th:href="@{/blog}" th:classappend="${filter == null} ? 'active'" th:text="#{blog.allLanguages}">All</a>
+            <a th:each="l : ${languages}" th:href="@{/blog(filter=${l})}" th:classappend="${filter == l} ? 'active'"
+               th:text="#{'lang.' + ${l}}">AZ</a>
+        </div>
+    </div>
+
+    <div class="post-grid">
+        <th:block th:each="p : ${posts}"><article th:replace="~{fragments/layout :: postCard(${p})}"></article></th:block>
+    </div>
+    <p th:if="${posts.isEmpty()}" class="muted empty" th:text="#{blog.empty}">No posts yet.</p>
+
+    <div class="pagination" th:if="${posts.totalPages > 1}">
+        <a th:if="${posts.hasPrevious()}" th:href="@{/blog(page=${posts.number - 1}, filter=${filter})}" class="btn btn-ghost">←</a>
+        <span th:text="${posts.number + 1} + ' / ' + ${posts.totalPages}">1 / 2</span>
+        <a th:if="${posts.hasNext()}" th:href="@{/blog(page=${posts.number + 1}, filter=${filter})}" class="btn btn-ghost">→</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

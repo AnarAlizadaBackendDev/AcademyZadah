@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.nav.inquiries}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('inquiries')}"></nav>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <p th:if="${inquiries.isEmpty()}" class="muted empty" th:text="#{admin.empty}">Nothing yet.</p>
+    <div class="inquiry-list">
+        <article class="card inquiry" th:each="i : ${inquiries}" th:classappend="${i.status.name() == 'NEW'} ? 'inquiry-new'">
+            <div class="inquiry-head">
+                <div>
+                    <strong th:text="${i.name}">Name</strong>
+                    <span class="muted small" th:text="${#temporals.format(i.createdAt, 'dd.MM.yyyy HH:mm')}">date</span>
+                </div>
+                <span class="badge" th:if="${i.courseInterest != null and !i.courseInterest.isEmpty()}" th:text="${i.courseInterest}">course</span>
+            </div>
+            <p class="small">
+                <a th:href="'mailto:' + ${i.email}" th:text="${i.email}">email</a>
+                <span th:if="${i.phone != null and !i.phone.isEmpty()}"> · <a th:href="'tel:' + ${i.phone}" th:text="${i.phone}">phone</a></span>
+            </p>
+            <p class="inquiry-message" th:text="${i.message}">Message</p>
+            <form th:action="@{/admin/inquiries/{id}(id=${i.id})}" method="post" class="form inquiry-form">
+                <select name="status">
+                    <option th:each="s : ${statuses}" th:value="${s}" th:selected="${s == i.status}" th:text="#{'inquiry.status.' + ${s}}">NEW</option>
+                </select>
+                <input type="text" name="adminNote" th:value="${i.adminNote}" th:placeholder="#{admin.inquiries.note}">
+                <button class="btn btn-primary btn-sm" th:text="#{admin.save}">Save</button>
+                <a th:href="@{/admin/students/new(fullName=${i.name}, email=${i.email}, phone=${i.phone})}" class="btn btn-ghost btn-sm"
+                   th:text="#{admin.inquiries.createStudent}">Create student</a>
+            </form>
+            <form th:action="@{/admin/inquiries/{id}/delete(id=${i.id})}" method="post" th:attr="data-confirm=#{admin.confirmDelete}">
+                <button class="btn btn-link btn-sm danger" th:text="#{admin.delete}">Delete</button>
+            </form>
+        </article>
+    </div>
+</main>
+</body>
+</html>

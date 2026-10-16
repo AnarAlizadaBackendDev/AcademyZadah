@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${course.title}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('courses')}"></nav>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <div class="page-head-row">
+        <h1 th:text="${course.title}">Course</h1>
+        <a th:href="@{/courses/{slug}(slug=${course.slug})}" class="btn btn-ghost btn-sm" target="_blank" th:text="#{admin.viewPublic}">View public page</a>
+    </div>
+
+    <section class="card month-admin" th:each="m : ${course.months}" th:id="'month-' + ${m.monthNumber}">
+        <details>
+            <summary class="month-admin-head">
+                <span class="month-no" th:text="${m.monthNumber}">1</span>
+                <strong th:text="${m.title}">Title</strong>
+                <small class="muted" th:text="#{admin.editMonth}">edit</small>
+            </summary>
+            <form th:action="@{/admin/months/{id}(id=${m.id})}" method="post" class="form">
+                <label><span th:text="#{admin.month.title}">Title</span><input type="text" name="title" th:value="${m.title}" required></label>
+                <label><span th:text="#{admin.month.description}">Description</span><textarea name="description" rows="2" th:text="${m.description}"></textarea></label>
+                <button class="btn btn-primary btn-sm" th:text="#{admin.save}">Save</button>
+            </form>
+        </details>
+
+        <table class="table">
+            <tr th:each="l : ${m.lessons}">
+                <td class="narrow muted" th:text="${l.sortOrder}">10</td>
+                <td><a th:href="@{/admin/lessons/{id}/edit(id=${l.id})}" th:text="${l.title}">Lesson</a></td>
+                <td class="right">
+                    <span th:if="${l.preview}" class="badge badge-accent" th:text="#{course.free}">Free</span>
+                    <span th:if="${!l.published}" class="badge badge-muted" th:text="#{admin.lesson.draft}">Draft</span>
+                    <span th:if="${!l.attachments.isEmpty()}" class="badge" th:text="'📎 ' + ${l.attachments.size()}">📎 1</span>
+                </td>
+            </tr>
+        </table>
+        <a th:href="@{/admin/months/{id}/lessons/new(id=${m.id})}" class="btn btn-ghost btn-sm" th:text="'+ ' + #{admin.lesson.new}">New lesson</a>
+    </section>
+</main>
+</body>
+</html>

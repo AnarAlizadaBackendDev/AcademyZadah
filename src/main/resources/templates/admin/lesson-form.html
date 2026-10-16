@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${lesson.id == null} ? #{admin.lesson.new} : ${lesson.title}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css">
+<main class="container page" th:with="course=${lesson.month.course}">
+    <nav th:replace="~{fragments/layout :: adminNav('courses')}"></nav>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <a th:href="@{/admin/courses/{id}(id=${course.id})}" class="link-back"
+       th:text="'← ' + ${course.title} + ' · ' + #{course.month(${lesson.month.monthNumber})}">← back</a>
+
+    <form th:action="${lesson.id == null} ? @{/admin/months/{id}/lessons(id=${lesson.month.id})} : @{/admin/lessons/{id}(id=${lesson.id})}"
+          method="post" class="form card">
+        <div class="form-row form-row-wide">
+            <label><span th:text="#{admin.lesson.title}">Title</span> *
+                <input type="text" name="title" th:value="${lesson.title}" required maxlength="200"></label>
+            <label class="narrow-field"><span th:text="#{admin.lesson.order}">Order</span>
+                <input type="number" name="sortOrder" th:value="${lesson.sortOrder}"></label>
+        </div>
+        <label><span th:text="#{admin.lesson.video}">Video link (YouTube/Vimeo, unlisted)</span>
+            <input type="url" name="videoUrl" th:value="${lesson.videoUrl}" placeholder="https://youtu.be/..."></label>
+        <label><span th:text="#{admin.lesson.content}">Content (Markdown)</span>
+            <textarea name="content" data-markdown rows="18" th:text="${lesson.content}"></textarea></label>
+        <label><span th:text="#{admin.lesson.teacherNotes}">Teacher guide (only you see this)</span>
+            <textarea name="teacherNotes" data-markdown rows="12" th:text="${lesson.teacherNotes}"></textarea></label>
+        <div class="check-row">
+            <label class="check-label"><input type="checkbox" name="published" value="true" th:checked="${lesson.published}">
+                <span th:text="#{admin.lesson.published}">Published</span></label>
+            <label class="check-label"><input type="checkbox" name="preview" value="true" th:checked="${lesson.preview}">
+                <span th:text="#{admin.lesson.preview}">Free preview (visible to everyone)</span></label>
+        </div>
+        <div class="button-row">
+            <button type="submit" class="btn btn-primary" th:text="#{admin.save}">Save</button>
+            <a th:if="${lesson.id != null}" th:href="@{/lessons/{id}(id=${lesson.id})}" target="_blank" class="btn btn-ghost" th:text="#{admin.view}">View</a>
+        </div>
+    </form>
+
+    <section th:if="${lesson.id != null}" id="files" class="card">
+        <h2 th:text="#{lesson.files}">Files</h2>
+        <ul class="file-list">
+            <li th:each="f : ${lesson.attachments}">
+                <a th:href="@{/lessons/{id}/files/{fid}(id=${lesson.id}, fid=${f.id})}" th:text="${f.originalName}">file</a>
+                <small class="muted" th:text="${f.sizeBytes / 1024} + ' KB'">KB</small>
+                <form th:action="@{/admin/attachments/{id}/delete(id=${f.id})}" method="post" class="inline" th:attr="data-confirm=#{admin.confirmDelete}">
+                    <button class="btn btn-link btn-sm danger" th:text="#{admin.delete}">Delete</button>
+                </form>
+            </li>
+        </ul>
+        <form th:action="@{/admin/lessons/{id}/attachments(id=${lesson.id})}" method="post" enctype="multipart/form-data" class="form">
+            <label class="dropzone" data-file-drop>
+                <input type="file" name="files" multiple required>
+                <span th:text="#{admin.dropFiles}">Drop files here or click to choose</span>
+            </label>
+            <button class="btn btn-ghost btn-sm" th:text="#{admin.upload}">Upload</button>
+        </form>
+    </section>
+
+    <form th:if="${lesson.id != null}" th:action="@{/admin/lessons/{id}/delete(id=${lesson.id})}" method="post" th:attr="data-confirm=#{admin.confirmDelete}">
+        <button class="btn btn-danger btn-sm" th:text="#{admin.lesson.delete}">Delete lesson</button>
+    </form>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.js"></script>
+<script th:src="@{/js/editor.js}"></script>
+</body>
+</html>

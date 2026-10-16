@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.nav.students}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('students')}"></nav>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <div class="toolbar">
+        <form th:action="@{/admin/students}" method="get" class="search">
+            <input type="search" name="q" th:value="${q}" th:placeholder="#{admin.search}">
+        </form>
+        <a th:href="@{/admin/students/new}" class="btn btn-primary" th:text="'+ ' + #{admin.students.new}">New student</a>
+    </div>
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr>
+                <th th:text="#{admin.students.name}">Name</th>
+                <th th:text="#{admin.students.courses}">Courses</th>
+                <th th:text="#{admin.students.created}">Created</th>
+                <th th:text="#{admin.students.status}">Status</th>
+            </tr></thead>
+            <tbody>
+            <tr th:each="s : ${students}">
+                <td><a th:href="@{/admin/students/{id}(id=${s.id})}"><strong th:text="${s.fullName}">Name</strong></a><br>
+                    <small class="muted" th:text="${s.email}">email</small></td>
+                <td><span th:each="e : ${s.enrollments}" class="badge" th:classappend="${!e.active} ? 'badge-muted'" th:text="${e.course.title}">Course</span></td>
+                <td th:text="${#temporals.format(s.createdAt, 'dd.MM.yyyy')}">date</td>
+                <td><span class="badge" th:classappend="${s.active} ? 'badge-green' : 'badge-muted'"
+                          th:text="${s.active} ? #{admin.students.active} : #{admin.students.inactive}">Active</span></td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${students.isEmpty()}" class="muted empty" th:text="#{admin.empty}">Nothing yet.</p>
+    </div>
+</main>
+</body>
+</html>

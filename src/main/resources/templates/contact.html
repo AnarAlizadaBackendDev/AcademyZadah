@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{contact.title}, #{contact.lead}, null)}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container page narrow">
+    <h1 th:text="#{contact.title}">Apply / Contact</h1>
+    <p class="section-lead" th:text="#{contact.lead}">Lead</p>
+
+    <div th:if="${param.sent != null}" class="alert alert-success" th:text="#{contact.sent}">Thanks!</div>
+
+    <form th:if="${param.sent == null}" th:action="@{/contact}" th:object="${form}" method="post" class="form card">
+        <div class="form-row">
+            <label><span th:text="#{contact.name}">Name</span> *
+                <input type="text" th:field="*{name}" required maxlength="120">
+                <small class="field-error" th:if="${#fields.hasErrors('name')}" th:text="#{validation.required}">error</small>
+            </label>
+            <label><span th:text="#{contact.email}">Email</span> *
+                <input type="email" th:field="*{email}" required maxlength="160">
+                <small class="field-error" th:if="${#fields.hasErrors('email')}" th:text="#{validation.email}">error</small>
+            </label>
+        </div>
+        <div class="form-row">
+            <label><span th:text="#{contact.phone}">Phone</span>
+                <input type="tel" th:field="*{phone}" maxlength="40" placeholder="+994 ...">
+            </label>
+            <label><span th:text="#{contact.course}">Course</span>
+                <select th:field="*{course}">
+                    <option value="" th:text="#{contact.course.notSure}">Not sure yet</option>
+                    <option th:each="c : ${courses}" th:value="${c.slug}" th:text="${c.title}">Course</option>
+                </select>
+            </label>
+        </div>
+        <label><span th:text="#{contact.message}">Message</span>
+            <textarea th:field="*{message}" rows="5" maxlength="2000" th:placeholder="#{contact.message.placeholder}"></textarea>
+        </label>
+        <label class="hp" aria-hidden="true">Website <input type="text" th:field="*{website}" tabindex="-1" autocomplete="off"></label>
+        <button type="submit" class="btn btn-primary" th:text="#{contact.send}">Send</button>
+    </form>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

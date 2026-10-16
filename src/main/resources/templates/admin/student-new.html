@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.students.new}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('students')}"></nav>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <form th:action="@{/admin/students}" method="post" class="form card narrow-form">
+        <h1 th:text="#{admin.students.new}">New student</h1>
+        <p class="muted" th:text="#{admin.students.newHint}">A password is generated automatically.</p>
+        <label><span th:text="#{admin.students.name}">Full name</span> *
+            <input type="text" name="fullName" th:value="${param.fullName}" required maxlength="120"></label>
+        <label><span th:text="#{contact.email}">Email</span> *
+            <input type="email" name="email" th:value="${param.email}" required maxlength="160"></label>
+        <label><span th:text="#{contact.phone}">Phone</span>
+            <input type="tel" name="phone" th:value="${param.phone}" maxlength="40"></label>
+        <div class="form-row">
+            <label><span th:text="#{contact.course}">Course</span>
+                <select name="courseId">
+                    <option value="" th:text="#{admin.students.noCourse}">— none —</option>
+                    <option th:each="c : ${courses}" th:value="${c.id}" th:text="${c.title}">Course</option>
+                </select></label>
+            <label><span th:text="#{admin.enrollment.start}">Start date</span>
+                <input type="date" name="startDate" th:value="${today}"></label>
+        </div>
+        <label><span th:text="#{admin.students.notes}">Notes</span>
+            <textarea name="notes" rows="3" th:text="${param.notes}"></textarea></label>
+        <button type="submit" class="btn btn-primary" th:text="#{admin.students.create}">Create</button>
+    </form>
+</main>
+</body>
+</html>

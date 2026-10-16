@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${lesson.title}, ${view.course().title}, null)}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page narrow center">
+    <div class="big-icon">🔒</div>
+    <h1 th:text="${lesson.title}">Lesson</h1>
+    <p class="section-lead" th:if="${view.access() == null}" th:text="#{lesson.locked.notEnrolled}">Not enrolled</p>
+    <p class="section-lead" th:if="${view.access() != null}"
+       th:text="#{lesson.locked.opensOn(${#temporals.format(view.access().unlockDate(lesson.month.monthNumber), 'dd.MM.yyyy')})}">Opens on</p>
+    <div class="hero-actions center">
+        <a th:href="@{/courses/{slug}(slug=${view.course().slug})}" class="btn btn-ghost" th:text="#{lesson.backToCourse}">Back</a>
+        <a th:if="${view.access() == null}" th:href="@{/contact(course=${view.course().slug})}" class="btn btn-primary" th:text="#{home.courses.apply}">Apply</a>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

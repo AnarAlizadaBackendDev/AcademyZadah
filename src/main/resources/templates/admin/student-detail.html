@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${student.fullName}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('students')}"></nav>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <div th:if="${credentials != null}" class="alert alert-success credentials">
+        <strong th:text="#{admin.students.credentialsTitle}">Send these login details to the student:</strong>
+        <pre id="credentials" th:text="${credentials}">...</pre>
+        <button type="button" class="btn btn-sm btn-ghost" data-copy="#credentials" th:text="#{admin.copy}">Copy</button>
+        <small class="muted" th:text="#{admin.students.credentialsOnce}">Shown only once.</small>
+    </div>
+
+    <div class="page-head-row">
+        <h1 th:text="${student.fullName}">Name</h1>
+        <span class="badge" th:classappend="${student.active} ? 'badge-green' : 'badge-muted'"
+              th:text="${student.active} ? #{admin.students.active} : #{admin.students.inactive}">Active</span>
+    </div>
+
+    <div class="admin-grid">
+        <section class="card">
+            <h2 th:text="#{admin.students.profile}">Profile</h2>
+            <form th:action="@{/admin/students/{id}(id=${student.id})}" method="post" class="form">
+                <label><span th:text="#{admin.students.name}">Name</span>
+                    <input type="text" name="fullName" th:value="${student.fullName}" required></label>
+                <label><span th:text="#{contact.email}">Email</span>
+                    <input type="email" name="email" th:value="${student.email}" required></label>
+                <label><span th:text="#{contact.phone}">Phone</span>
+                    <input type="tel" name="phone" th:value="${student.phone}"></label>
+                <label><span th:text="#{admin.students.notes}">Notes</span>
+                    <textarea name="notes" rows="3" th:text="${student.notes}"></textarea></label>
+                <button type="submit" class="btn btn-primary" th:text="#{admin.save}">Save</button>
+            </form>
+            <hr>
+            <div class="button-row">
+                <form th:action="@{/admin/students/{id}/reset-password(id=${student.id})}" method="post" th:attr="data-confirm=#{admin.students.resetConfirm}">
+                    <button class="btn btn-ghost btn-sm" th:text="#{admin.students.resetPassword}">Reset password</button>
+                </form>
+                <form th:action="@{/admin/students/{id}/toggle-active(id=${student.id})}" method="post">
+                    <button class="btn btn-ghost btn-sm" th:text="${student.active} ? #{admin.students.deactivate} : #{admin.students.activate}">Deactivate</button>
+                </form>
+                <form th:action="@{/admin/students/{id}/delete(id=${student.id})}" method="post" th:attr="data-confirm=#{admin.confirmDelete}">
+                    <button class="btn btn-danger btn-sm" th:text="#{admin.delete}">Delete</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 th:text="#{admin.enrollment.title}">Enrollments</h2>
+            <p class="muted small" th:text="#{admin.enrollment.hint}">Month N opens N-1 months after start.</p>
+            <div class="enrollment" th:each="e : ${student.enrollments}">
+                <form th:action="@{/admin/enrollments/{id}(id=${e.id})}" method="post" class="form">
+                    <strong th:text="${e.course.title}">Course</strong>
+                    <div class="form-row">
+                        <label><span th:text="#{admin.enrollment.start}">Start</span>
+                            <input type="date" name="startDate" th:value="${e.startDate}" required></label>
+                        <label><span th:text="#{admin.enrollment.end}">End (optional)</span>
+                            <input type="date" name="endDate" th:value="${e.endDate}"></label>
+                    </div>
+                    <label class="check-label"><input type="checkbox" name="active" value="true" th:checked="${e.active}">
+                        <span th:text="#{admin.students.active}">Active</span></label>
+                    <div class="button-row">
+                        <button class="btn btn-primary btn-sm" th:text="#{admin.save}">Save</button>
+                    </div>
+                </form>
+                <form th:action="@{/admin/enrollments/{id}/delete(id=${e.id})}" method="post" th:attr="data-confirm=#{admin.confirmDelete}">
+                    <button class="btn btn-link btn-sm danger" th:text="#{admin.enrollment.remove}">Remove</button>
+                </form>
+            </div>
+
+            <form th:action="@{/admin/students/{id}/enrollments(id=${student.id})}" method="post" class="form add-enrollment">
+                <strong th:text="#{admin.enrollment.add}">Add course</strong>
+                <div class="form-row">
+                    <select name="courseId" required>
+                        <option th:each="c : ${courses}" th:value="${c.id}" th:text="${c.title}">Course</option>
+                    </select>
+                    <input type="date" name="startDate" th:value="${today}" required>
+                </div>
+                <button class="btn btn-ghost btn-sm" th:text="'+ ' + #{admin.enrollment.add}">Add</button>
+            </form>
+        </section>
+    </div>
+
+    <section class="card" th:if="${!views.isEmpty()}">
+        <h2 th:text="#{admin.students.progress}">Progress</h2>
+        <div th:each="v : ${views}" class="progress-block">
+            <div class="progress-row">
+                <strong th:text="${v.course().title}">Course</strong>
+                <div class="progress"><div th:style="'width:' + ${v.percent()} + '%'"></div></div>
+                <span th:text="${v.completed()} + ' / ' + ${v.total()}">3 / 20</span>
+            </div>
+            <div class="month-chips">
+                <span th:each="mv : ${v.months()}" class="badge" th:classappend="${mv.open()} ? 'badge-green' : 'badge-muted'"
+                      th:title="${mv.unlockDate() != null} ? ${#temporals.format(mv.unlockDate(), 'dd.MM.yyyy')} : ''"
+                      th:text="#{course.month(${mv.month().monthNumber})}">Month 1</span>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.nav.courses}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('courses')}"></nav>
+    <div class="course-grid">
+        <a class="card course-admin-card" th:each="c : ${courses}" th:href="@{/admin/courses/{id}(id=${c.id})}">
+            <h2 th:text="${c.title}">Course</h2>
+            <p class="muted" th:text="#{course.months(${c.durationMonths})}">4 months</p>
+            <ol class="month-list">
+                <li th:each="m : ${c.months}"><span class="month-no" th:text="${m.monthNumber}">1</span>
+                    <span th:text="${m.title}">Title</span>
+                    <small class="muted" th:text="'(' + ${m.lessons.size()} + ')'">(3)</small></li>
+            </ol>
+        </a>
+    </div>
+</main>
+</body>
+</html>

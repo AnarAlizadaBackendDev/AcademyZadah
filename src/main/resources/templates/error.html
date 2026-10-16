@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${status}">Error</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<main class="container page narrow center">
+    <div class="big-icon" th:text="${status}">404</div>
+    <h1 th:text="${status == 404} ? #{error.notFound} : (${status == 403} ? #{error.forbidden} : #{error.generic})">Error</h1>
+    <p><a href="/" class="btn btn-primary" th:text="#{error.home}">Home</a></p>
+</main>
+</body>
+</html>

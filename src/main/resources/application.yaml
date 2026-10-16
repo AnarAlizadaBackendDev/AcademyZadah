@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: academy
+  datasource:
+    # Railway Postgres exposes PGHOST/PGPORT/PGDATABASE/PGUSER/PGPASSWORD.
+    # Locally, spring-boot-docker-compose starts compose.yaml and overrides these.
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:academy}
+    username: ${PGUSER:academy}
+    password: ${PGPASSWORD:academy}
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: true
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 60MB
+  thymeleaf:
+    cache: ${THYMELEAF_CACHE:true}
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: native
+  servlet:
+    session:
+      timeout: 8h
+      cookie:
+        http-only: true
+        same-site: lax
+
+app:
+  brand-name: ${APP_BRAND:Java Academy}
+  owner-name: ${APP_OWNER:Anar Alizada}
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+  storage-dir: ${STORAGE_DIR:./data/uploads}
+  notify-email: ${NOTIFY_EMAIL:}
+  admin:
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}
+    name: ${ADMIN_NAME:Admin}
+  contact:
+    email: ${CONTACT_EMAIL:anaralizadacoder1999@gmail.com}
+    phone: ${CONTACT_PHONE:+994505625342}
+    linkedin: ${CONTACT_LINKEDIN:}
+    github: ${CONTACT_GITHUB:}
+    telegram: ${CONTACT_TELEGRAM:}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  thymeleaf:
+    cache: false
+app:
+  admin:
+    email: admin@local.dev
+    password: admin12345

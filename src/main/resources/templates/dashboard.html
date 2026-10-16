@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{dashboard.title}, #{dashboard.title}, null)}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container page">
+    <div th:if="${param.passwordChanged != null}" class="alert alert-success" th:text="#{account.password.changed}">Changed</div>
+    <h1 th:text="#{dashboard.hello(${me.fullName})}">Hello</h1>
+
+    <p th:if="${views.isEmpty()}" class="alert" th:text="#{dashboard.noCourses}">No active courses.</p>
+
+    <div class="dash-grid">
+        <section class="card dash-course" th:each="v : ${views}">
+            <div class="dash-course-head">
+                <h2 th:text="${v.course().title}">Course</h2>
+                <span class="badge" th:if="${v.access().allMonthsOpen()}" th:text="#{dashboard.included}">Included</span>
+            </div>
+            <div class="progress-row">
+                <div class="progress"><div th:style="'width:' + ${v.percent()} + '%'"></div></div>
+                <span th:text="${v.percent()} + '%'">40%</span>
+            </div>
+            <p class="muted small" th:text="#{dashboard.progress(${v.completed()}, ${v.total()})}">3 / 20 lessons</p>
+
+            <div th:with="nextLesson=${v.nextLesson()}">
+                <a th:if="${nextLesson != null}" th:href="@{/lessons/{id}(id=${nextLesson.lesson().id})}" class="next-lesson">
+                    <small class="muted" th:text="#{dashboard.continue}">Continue</small>
+                    <strong th:text="${nextLesson.lesson().title}">Lesson</strong>
+                </a>
+            </div>
+            <p class="muted small" th:with="locked=${v.nextLockedMonth()}" th:if="${locked != null}"
+               th:text="#{dashboard.nextUnlock(${locked.month().monthNumber}, ${#temporals.format(locked.unlockDate(), 'dd.MM.yyyy')})}">
+                Month 3 opens on ...</p>
+
+            <a th:href="@{/courses/{slug}(slug=${v.course().slug})}" class="btn btn-ghost" th:text="#{dashboard.openCourse}">Open course</a>
+        </section>
+    </div>
+
+    <p class="muted small"><a th:href="@{/account/password}" th:text="#{account.password.title}">Change password</a></p>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${post.id == null} ? #{admin.blog.new} : ${post.title}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css">
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('blog')}"></nav>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <form th:action="${post.id == null} ? @{/admin/blog} : @{/admin/blog/{id}(id=${post.id})}" method="post" class="form card">
+        <label><span th:text="#{admin.blog.title}">Title</span> *
+            <input type="text" name="title" th:value="${post.title}" required maxlength="200" class="input-lg"></label>
+        <div class="form-row">
+            <label><span th:text="#{admin.blog.slug}">URL (optional)</span>
+                <input type="text" name="slug" th:value="${post.slug}" placeholder="auto-from-title"></label>
+            <label class="narrow-field"><span th:text="#{admin.blog.lang}">Language</span>
+                <select name="lang">
+                    <option th:each="l : ${languages}" th:value="${l}" th:text="#{'lang.' + ${l}}" th:selected="${l == post.lang}">AZ</option>
+                </select></label>
+            <label class="narrow-field"><span th:text="#{admin.blog.status}">Status</span>
+                <select name="status">
+                    <option value="DRAFT" th:selected="${!post.published}" th:text="#{admin.blog.status.DRAFT}">Draft</option>
+                    <option value="PUBLISHED" th:selected="${post.published}" th:text="#{admin.blog.status.PUBLISHED}">Published</option>
+                </select></label>
+        </div>
+        <label><span th:text="#{admin.blog.summary}">Short summary</span>
+            <textarea name="summary" rows="2" maxlength="500" th:text="${post.summary}"></textarea></label>
+
+        <div class="field">
+            <span th:text="#{admin.blog.cover}">Cover image</span>
+            <div class="dropzone cover-drop" data-cover-drop>
+                <input type="hidden" name="coverImage" th:value="${post.coverImage}">
+                <img th:src="${post.coverImage}" th:classappend="${post.coverImage == null} ? 'hidden'" alt="">
+                <span th:text="#{admin.dropImage}">Drop an image here or click</span>
+                <input type="file" accept="image/*">
+            </div>
+            <button type="button" class="btn btn-link btn-sm" data-cover-remove th:text="#{admin.blog.removeCover}">Remove cover</button>
+        </div>
+
+        <label><span th:text="#{admin.blog.content}">Content</span>
+            <small class="muted" th:text="#{admin.blog.contentHint}">Drag & drop or paste images into the editor.</small>
+            <textarea name="content" data-markdown rows="20" th:text="${post.content}"></textarea></label>
+
+        <div class="button-row">
+            <button type="submit" class="btn btn-primary" th:text="#{admin.save}">Save</button>
+            <a th:if="${post.id != null}" th:href="@{/blog/{slug}(slug=${post.slug})}" target="_blank" class="btn btn-ghost" th:text="#{admin.view}">View</a>
+        </div>
+    </form>
+
+    <form th:if="${post.id != null}" th:action="@{/admin/blog/{id}/delete(id=${post.id})}" method="post" th:attr="data-confirm=#{admin.confirmDelete}">
+        <button class="btn btn-danger btn-sm" th:text="#{admin.delete}">Delete</button>
+    </form>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.js"></script>
+<script th:src="@{/js/editor.js}"></script>
+</body>
+</html>

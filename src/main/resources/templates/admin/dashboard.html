@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.nav.dashboard}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('dashboard')}"></nav>
+    <div class="stats">
+        <a class="stat" th:href="@{/admin/students}"><strong th:text="${activeStudents}">0</strong><span th:text="#{admin.stats.students}">Active students</span></a>
+        <a class="stat" th:href="@{/admin/inquiries}" th:classappend="${newInquiries > 0} ? 'stat-hot'"><strong th:text="${newInquiries}">0</strong><span th:text="#{admin.stats.inquiries}">New inquiries</span></a>
+        <a class="stat" th:href="@{/admin/courses}"><strong th:text="${lessonCount}">0</strong><span th:text="#{admin.stats.lessons}">Lessons</span></a>
+        <a class="stat" th:href="@{/admin/blog}"><strong th:text="${publishedPosts}">0</strong><span th:text="#{admin.stats.posts}">Published posts</span></a>
+    </div>
+
+    <div class="quick-actions">
+        <a th:href="@{/admin/students/new}" class="btn btn-primary" th:text="'+ ' + #{admin.students.new}">New student</a>
+        <a th:href="@{/admin/blog/new}" class="btn btn-ghost" th:text="'+ ' + #{admin.blog.new}">New post</a>
+        <a th:href="@{/admin/courses}" class="btn btn-ghost" th:text="#{admin.courses.manage}">Manage lessons</a>
+    </div>
+
+    <section class="card">
+        <h2 th:text="#{admin.inquiries.recent}">Recent inquiries</h2>
+        <table class="table" th:if="${!recentInquiries.isEmpty()}">
+            <tr th:each="i : ${recentInquiries}">
+                <td th:text="${#temporals.format(i.createdAt, 'dd.MM.yyyy')}">date</td>
+                <td><strong th:text="${i.name}">Name</strong><br><small class="muted" th:text="${i.email}">email</small></td>
+                <td th:text="${i.courseInterest}">course</td>
+                <td><span class="badge" th:classappend="${i.status.name() == 'NEW'} ? 'badge-accent'" th:text="#{'inquiry.status.' + ${i.status}}">NEW</span></td>
+            </tr>
+        </table>
+        <p th:if="${recentInquiries.isEmpty()}" class="muted" th:text="#{admin.empty}">Nothing yet.</p>
+    </section>
+</main>
+</body>
+</html>

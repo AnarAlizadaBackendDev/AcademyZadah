@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{profile.role}, #{home.metaDescription}, null)}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main>
+    <section class="hero">
+        <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+        <div class="container hero-inner">
+            <div class="reveal">
+                <span class="status-chip"><span class="dot"></span><span th:text="#{home.available}">Accepting new students</span></span>
+                <h1><span class="hello" th:text="#{home.hello}">Hi, I am</span><span th:text="${app.ownerName()}">Your Name</span></h1>
+                <p class="hero-role" th:text="#{profile.role}">Senior Java Backend Developer</p>
+                <p class="hero-lead" th:text="#{profile.tagline}">Tagline</p>
+                <div class="hero-actions">
+                    <a th:href="@{/#courses}" class="btn btn-primary btn-lg"><span th:text="#{home.cta.courses}">View courses</span> <span class="arrow">→</span></a>
+                    <a th:href="@{/contact}" class="btn btn-ghost btn-lg" th:text="#{home.cta.contact}">Contact me</a>
+                </div>
+                <div class="hero-meta">
+                    <div><strong th:text="#{profile.fact1.value}">7+</strong><span th:text="#{profile.fact1.label}">years</span></div>
+                    <div><strong th:text="#{profile.fact2.value}">20+</strong><span th:text="#{profile.fact2.label}">projects</span></div>
+                    <div><strong th:text="#{profile.fact3.value}">13</strong><span th:text="#{profile.fact3.label}">months</span></div>
+                </div>
+            </div>
+            <div class="hero-visual reveal" aria-hidden="true">
+                <div class="code-window">
+                    <div class="code-bar"><i></i><i></i><i></i><span>Mentor.java</span></div>
+<pre><code class="language-java">public class Mentor {
+
+    String name = "Anar Alizada";
+    String role = "Senior Software Engineer";
+
+    List&lt;String&gt; stack = List.of(
+        "Java", "Spring Cloud", "Kafka",
+        "GCP", "Docker", "PostgreSQL");
+
+    Developer teach(Student you) {
+        return you.learn(stack)
+                  .buildProjects()
+                  .readyForWork();
+    }
+}</code></pre>
+                </div>
+                <div class="float-card fc1"><span class="ic">J</span><span>Java Essentials<small th:text="#{course.months(4)}">4 months</small></span></div>
+                <div class="float-card fc2"><span class="ic">S</span><span>Java Advanced<small th:text="#{course.months(9)}">9 months</small></span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-intro reveal">
+                <span class="eyebrow">01 · <span th:text="#{nav.about}">About</span></span>
+                <h2 th:utext="#{home.about.heading}">Backend engineer by day, <em>mentor</em> by heart</h2>
+            </div>
+            <div class="bento reveal-group">
+                <article class="tile tile-bio">
+                    <div class="avatar" th:text="${#strings.substring(app.ownerName(), 0, 1)}">Y</div>
+                    <p th:text="#{profile.bio1}">Bio</p>
+                    <p th:text="#{profile.bio2}">Bio</p>
+                </article>
+                <article class="tile tile-stat tone-accent">
+                    <strong th:text="#{profile.fact1.value}">7+</strong><span th:text="#{profile.fact1.label}">years</span>
+                </article>
+                <article class="tile tile-stat tone-sage">
+                    <strong th:text="#{profile.fact2.value}">20+</strong><span th:text="#{profile.fact2.label}">projects</span>
+                </article>
+                <article class="tile tile-stat">
+                    <strong th:text="#{profile.fact3.value}">13</strong><span th:text="#{profile.fact3.label}">months</span>
+                </article>
+                <article class="tile tile-now">
+                    <small th:text="#{home.currently}">Currently</small>
+                    <div>
+                        <strong th:text="#{profile.exp1.title}">Senior Java Developer</strong>
+                        <div th:text="'@ ' + #{profile.exp1.company}">@ Company</div>
+                    </div>
+                </article>
+                <article class="tile tile-skills">
+                    <div class="skill-grid">
+                        <div class="skill-group">
+                            <h4>Languages &amp; Design</h4>
+                            <div class="chips"><span>Java</span><span>Python</span><span>JavaScript</span><span>System Design</span><span>SOLID</span><span>Design Patterns</span></div>
+                        </div>
+                        <div class="skill-group">
+                            <h4>Spring &amp; Frameworks</h4>
+                            <div class="chips"><span>Spring Boot</span><span>Spring Cloud</span><span>Spring Data</span><span>Spring Security</span><span>Spring Batch</span><span>Spring MVC</span><span>React</span><span>JUnit</span></div>
+                        </div>
+                        <div class="skill-group">
+                            <h4>Architecture &amp; APIs</h4>
+                            <div class="chips"><span>Microservices</span><span>Event-Driven</span><span>Distributed Systems</span><span>REST</span><span>gRPC</span><span>GraphQL</span><span>SOAP</span></div>
+                        </div>
+                        <div class="skill-group">
+                            <h4>Data, Cloud &amp; Tools</h4>
+                            <div class="chips"><span>PostgreSQL</span><span>MySQL</span><span>Oracle</span><span>Kafka</span><span>Liquibase</span><span>GCP</span><span>Docker</span><span>CI/CD</span><span>Git</span><span>Gradle</span><span>Maven</span></div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-intro reveal">
+                <span class="eyebrow">02 · <span th:text="#{home.experience}">Experience</span></span>
+                <h2 th:utext="#{home.experience.heading}">Where I have <em>worked</em></h2>
+            </div>
+            <ol class="timeline reveal-group">
+                <li th:each="i : ${#numbers.sequence(1, 4)}">
+                    <div class="timeline-period" th:text="#{'profile.exp' + ${i} + '.period'}">2022 — now</div>
+                    <div class="timeline-card">
+                        <h3><span th:text="#{'profile.exp' + ${i} + '.title'}">Role</span>
+                            <span class="accent" th:text="'· ' + #{'profile.exp' + ${i} + '.company'}">Company</span></h3>
+                        <p class="muted" th:text="#{'profile.exp' + ${i} + '.text'}">Text</p>
+                    </div>
+                </li>
+            </ol>
+
+            <h3 class="certs-title reveal" th:text="#{home.certs}">Certifications</h3>
+            <div class="certs reveal-group">
+                <div class="cert"><span class="cert-logo oracle">O</span><div><strong>Oracle Certified Professional</strong><small>Java SE 17 Developer</small></div></div>
+                <div class="cert"><span class="cert-logo oracle">O</span><div><strong>Oracle Certified Associate</strong><small>Java SE 8 Programmer</small></div></div>
+                <div class="cert"><span class="cert-logo gcp">G</span><div><strong>Google Cloud Professional</strong><small>Cloud Developer</small></div></div>
+                <div class="cert"><span class="cert-logo gcp">G</span><div><strong>Google Cloud Associate</strong><small>Cloud Engineer</small></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="courses" class="section">
+        <div class="container">
+            <div class="section-intro reveal">
+                <span class="eyebrow">03 · <span th:text="#{nav.courses}">Courses</span></span>
+                <h2 th:utext="#{home.courses.heading}">Two programs, <em>one clear path</em></h2>
+                <p class="section-lead" th:text="#{home.courses.lead}">Lead</p>
+            </div>
+            <div class="course-grid reveal-group">
+                <article class="course-card" th:each="c, st : ${courses}">
+                    <div class="course-card-head">
+                        <div class="duration"><strong th:text="${c.durationMonths}">4</strong><span th:text="#{home.courses.monthsWord}">months</span></div>
+                        <span class="level" th:text="${st.first} ? #{home.courses.level1} : #{home.courses.level2}">Beginner</span>
+                        <h3 th:text="${c.title}">Java Essentials</h3>
+                        <p th:text="#{'course.' + ${c.slug} + '.short'}">Description</p>
+                    </div>
+                    <ol class="month-list">
+                        <li th:each="m : ${c.months}"><span class="month-no" th:text="${m.monthNumber}">1</span><span th:text="${m.title}">Title</span></li>
+                    </ol>
+                    <div class="course-card-foot">
+                        <a th:href="@{/courses/{slug}(slug=${c.slug})}" class="btn btn-ghost" th:text="#{home.courses.syllabus}">Syllabus</a>
+                        <a th:href="@{/contact(course=${c.slug})}" class="btn btn-primary"><span th:text="#{home.courses.apply}">Apply</span> <span class="arrow">→</span></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-intro reveal">
+                <span class="eyebrow">04 · <span th:text="#{home.how.title}">How it works</span></span>
+                <h2 th:utext="#{home.how.heading}">From first message to <em>first lesson</em></h2>
+            </div>
+            <div class="steps reveal-group">
+                <div class="step" th:each="i : ${#numbers.sequence(1, 4)}">
+                    <span class="step-no" th:text="'0' + ${i}">01</span>
+                    <h3 th:text="#{'home.how.step' + ${i} + '.title'}">Step</h3>
+                    <p class="muted" th:text="#{'home.how.step' + ${i} + '.text'}">Text</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" th:if="${!posts.isEmpty()}">
+        <div class="container">
+            <div class="section-head reveal">
+                <div>
+                    <span class="eyebrow">05 · <span th:text="#{nav.blog}">Blog</span></span>
+                    <h2 th:text="#{home.blog.title}">From the blog</h2>
+                </div>
+                <a th:href="@{/blog}" class="btn btn-ghost btn-sm"><span th:text="#{home.blog.all}">All posts</span></a>
+            </div>
+            <div class="post-grid reveal-group">
+                <th:block th:each="p : ${posts}"><article th:replace="~{fragments/layout :: postCard(${p})}"></article></th:block>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="cta-panel reveal">
+                <div>
+                    <h2 th:text="#{home.cta.title}">Ready to start?</h2>
+                    <p th:text="#{home.cta.text}">Text</p>
+                </div>
+                <a th:href="@{/contact}" class="btn btn-primary btn-lg"><span th:text="#{home.cta.button}">Apply now</span> <span class="arrow">→</span></a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

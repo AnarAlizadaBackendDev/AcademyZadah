@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${lesson.title}, ${view.course().title}, null)}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container lesson-layout">
+    <aside class="lesson-nav">
+        <a th:href="@{/courses/{slug}(slug=${view.course().slug})}" class="lesson-nav-course" th:text="${view.course().title}">Course</a>
+        <div th:each="mv : ${view.months()}" class="lesson-nav-month">
+            <div class="lesson-nav-month-title">
+                <span th:text="#{course.month(${mv.month().monthNumber})}">Month 1</span>
+                <span th:if="${!mv.open()}">🔒</span>
+            </div>
+            <ul>
+                <li th:each="lv : ${mv.lessons()}">
+                    <a th:if="${lv.accessible()}" th:href="@{/lessons/{id}(id=${lv.lesson().id})}"
+                       th:classappend="${lv.lesson().id == lesson.id} ? 'active'">
+                        <span class="check" th:text="${lv.completed()} ? '✓' : ''"></span><span th:text="${lv.lesson().title}">Lesson</span>
+                    </a>
+                    <span th:unless="${lv.accessible()}" class="muted" th:text="${lv.lesson().title}">Lesson</span>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <article class="lesson-main">
+        <p class="eyebrow">
+            <span th:text="${view.course().title}">Course</span> ·
+            <span th:text="#{course.month(${lesson.month.monthNumber})}">Month 1</span>
+        </p>
+        <h1 th:text="${lesson.title}">Lesson</h1>
+
+        <div class="video" th:if="${embedUrl != null}">
+            <iframe th:src="${embedUrl}" allowfullscreen loading="lazy"
+                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
+        <p th:if="${embedUrl == null and lesson.videoUrl != null}">
+            <a th:href="${lesson.videoUrl}" target="_blank" rel="noopener" class="btn btn-ghost" th:text="#{lesson.watchVideo}">Watch video</a>
+        </p>
+
+        <div class="prose" th:utext="${html}">Content</div>
+
+        <details class="teacher-guide" th:if="${teacherHtml != null}">
+            <summary>🎓 <span th:text="#{lesson.teacherGuide}">Teacher guide</span> <small class="muted" th:text="#{lesson.teacherGuideHint}">only visible to you</small></summary>
+            <div class="prose" th:utext="${teacherHtml}">Notes</div>
+        </details>
+
+        <div class="attachments" th:if="${!lesson.attachments.isEmpty()}">
+            <h3 th:text="#{lesson.files}">Files</h3>
+            <a th:each="f : ${lesson.attachments}" th:href="@{/lessons/{id}/files/{fid}(id=${lesson.id}, fid=${f.id})}" class="file">
+                📎 <span th:text="${f.originalName}">file.pdf</span>
+                <small class="muted" th:text="${f.sizeBytes / 1024} + ' KB'">12 KB</small>
+            </a>
+        </div>
+
+        <div class="lesson-footer">
+            <form th:if="${me != null and !me.admin and current != null}" th:action="@{/lessons/{id}/complete(id=${lesson.id})}" method="post">
+                <button type="submit" class="btn" th:classappend="${current.completed()} ? 'btn-ghost' : 'btn-primary'"
+                        th:text="${current.completed()} ? #{lesson.markUndone} : #{lesson.markDone}">Mark as done</button>
+            </form>
+            <div th:if="${me == null}" class="alert">
+                <span th:text="#{lesson.previewNote}">This is a free preview.</span>
+                <a th:href="@{/contact(course=${view.course().slug})}" th:text="#{home.courses.apply}">Apply</a>
+            </div>
+            <a th:if="${me != null and me.admin}" th:href="@{/admin/lessons/{id}/edit(id=${lesson.id})}" class="btn btn-ghost" th:text="#{admin.edit}">Edit</a>
+            <div class="pager">
+                <a th:if="${prev != null and prev.accessible()}" th:href="@{/lessons/{id}(id=${prev.lesson().id})}" class="btn btn-ghost">← <span th:text="#{lesson.prev}">Previous</span></a>
+                <a th:if="${next != null and next.accessible()}" th:href="@{/lessons/{id}(id=${next.lesson().id})}" class="btn btn-ghost"><span th:text="#{lesson.next}">Next</span> →</a>
+            </div>
+        </div>
+    </article>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

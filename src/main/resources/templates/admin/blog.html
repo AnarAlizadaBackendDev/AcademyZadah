@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.nav.blog}, 'Admin', null)}"></head>
+<body class="admin">
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <nav th:replace="~{fragments/layout :: adminNav('blog')}"></nav>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <div class="toolbar">
+        <span></span>
+        <a th:href="@{/admin/blog/new}" class="btn btn-primary" th:text="'+ ' + #{admin.blog.new}">New post</a>
+    </div>
+    <div class="card table-wrap">
+        <table class="table">
+            <tr th:each="p : ${posts}">
+                <td><a th:href="@{/admin/blog/{id}/edit(id=${p.id})}"><strong th:text="${p.title}">Title</strong></a><br>
+                    <small class="muted" th:text="'/blog/' + ${p.slug}">slug</small></td>
+                <td><span class="badge" th:text="${#strings.toUpperCase(p.lang)}">AZ</span></td>
+                <td><span class="badge" th:classappend="${p.published} ? 'badge-green' : 'badge-muted'"
+                          th:text="#{'admin.blog.status.' + ${p.status}}">Draft</span></td>
+                <td th:text="${#temporals.format(p.updatedAt, 'dd.MM.yyyy')}">date</td>
+            </tr>
+        </table>
+        <p th:if="${posts.isEmpty()}" class="muted empty" th:text="#{admin.empty}">Nothing yet.</p>
+    </div>
+</main>
+</body>
+</html>

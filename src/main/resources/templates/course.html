@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html th:lang="${currentLang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${view.course().title}, #{'course.' + ${view.course().slug} + '.short'}, null)}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container page" th:with="course=${view.course()}">
+    <div class="page-head">
+        <span class="badge" th:text="#{course.months(${course.durationMonths})}">4 months</span>
+        <h1 th:text="${course.title}">Java Essentials</h1>
+        <p class="section-lead" th:text="#{'course.' + ${course.slug} + '.long'}">Long description</p>
+        <p class="muted" th:if="${course.includesCourse != null}"
+           th:text="#{course.includes(${course.includesCourse.title})}">Includes Essentials</p>
+        <div class="hero-actions" th:if="${view.access() == null and (me == null or !me.admin)}">
+            <a th:href="@{/contact(course=${course.slug})}" class="btn btn-primary" th:text="#{home.courses.apply}">Apply</a>
+            <span class="muted" th:text="#{course.previewHint}">Preview lessons are free</span>
+        </div>
+        <div th:if="${view.access() != null}" class="progress-row">
+            <div class="progress"><div th:style="'width:' + ${view.percent()} + '%'"></div></div>
+            <span th:text="#{dashboard.progress(${view.completed()}, ${view.total()})}">3 / 20</span>
+        </div>
+    </div>
+
+    <div class="syllabus">
+        <details class="month" th:each="mv, st : ${view.months()}" th:id="'month-' + ${mv.month().monthNumber}"
+                 th:open="${st.first or mv.open()}">
+            <summary>
+                <span class="month-no" th:text="${mv.month().monthNumber}">1</span>
+                <span class="month-title">
+                    <strong th:text="${mv.month().title}">Title</strong>
+                    <small class="muted" th:text="${mv.month().description}">Description</small>
+                </span>
+                <span class="month-state">
+                    <span th:if="${mv.open()}" class="badge badge-green" th:text="#{course.open}">Open</span>
+                    <span th:if="${!mv.open() and mv.unlockDate() != null}" class="badge"
+                          th:text="#{course.opensOn(${#temporals.format(mv.unlockDate(), 'dd.MM.yyyy')})}">Opens on</span>
+                    <span th:if="${!mv.open() and mv.unlockDate() == null}" class="lock">🔒</span>
+                </span>
+            </summary>
+            <ul class="lesson-list">
+                <li th:each="lv : ${mv.lessons()}" th:classappend="${!lv.accessible()} ? 'locked'">
+                    <a th:if="${lv.accessible()}" th:href="@{/lessons/{id}(id=${lv.lesson().id})}">
+                        <span class="check" th:text="${lv.completed()} ? '✓' : '▸'">▸</span>
+                        <span th:text="${lv.lesson().title}">Lesson</span>
+                        <span th:if="${lv.lesson().preview}" class="badge badge-accent" th:text="#{course.free}">Free</span>
+                        <span th:if="${!lv.lesson().published}" class="badge" th:text="#{admin.lesson.draft}">Draft</span>
+                    </a>
+                    <span th:unless="${lv.accessible()}">
+                        <span class="check">🔒</span>
+                        <span th:text="${lv.lesson().title}">Lesson</span>
+                    </span>
+                </li>
+                <li th:if="${mv.lessons().isEmpty()}" class="muted empty" th:text="#{course.noLessons}">Coming soon</li>
+            </ul>
+        </details>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

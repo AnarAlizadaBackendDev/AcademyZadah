@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html th:lang="${post.lang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${post.title}, ${post.summary}, ${post.coverImage})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container page narrow">
+    <a th:href="@{/blog}" class="link-back" th:text="'← ' + #{blog.title}">← Blog</a>
+    <div th:if="${!post.published}" class="alert" th:text="#{blog.draftNotice}">Draft</div>
+    <h1 class="post-title" th:text="${post.title}">Title</h1>
+    <div class="post-meta">
+        <span th:text="${app.ownerName()}">Author</span>
+        <span th:if="${post.publishedAt != null}" th:text="${#temporals.format(post.publishedAt, 'dd.MM.yyyy')}">date</span>
+        <a th:if="${me != null and me.admin}" th:href="@{/admin/blog/{id}/edit(id=${post.id})}" th:text="#{admin.edit}">Edit</a>
+    </div>
+    <img th:if="${post.coverImage != null}" th:src="${post.coverImage}" th:alt="${post.title}" class="post-hero-img">
+    <div class="prose" th:utext="${html}">Content</div>
+
+    <div class="cta-box">
+        <h3 th:text="#{blog.cta.title}">Want to learn Java with me?</h3>
+        <p class="muted" th:text="#{blog.cta.text}">Text</p>
+        <a th:href="@{/#courses}" class="btn btn-primary" th:text="#{home.cta.courses}">Courses</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
